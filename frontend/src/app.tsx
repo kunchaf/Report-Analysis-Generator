@@ -4,7 +4,8 @@ import InputPanel from './components/InputPanel';
 import OutputPanel from './components/OutputPanel';
 import ReaderModal from './components/ReaderModal';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+// Empty = same origin (production). Fallback to localhost for local dev.
+const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000';
 
 export interface ProgressStep {
   status: 'started' | 'processing' | 'complete';

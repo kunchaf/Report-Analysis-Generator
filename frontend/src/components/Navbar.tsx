@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function Navbar() {
   return (
     <nav className="h-16 bg-white border-b border-slate-200 px-8 flex items-center justify-between sticky top-0 z-50">

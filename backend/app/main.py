@@ -8,6 +8,8 @@ load_dotenv(dotenv_path=_backend_root / "app" / ".env")
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from app.api import routes, notifications
 
 app = FastAPI(
@@ -24,10 +26,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# API routes
 app.include_router(routes.router, prefix="/api")
 app.include_router(notifications.router)
 
+# Serve React frontend static files (built into frontend/dist)
+_dist = _backend_root.parent / "frontend" / "dist"
+if _dist.exists():
+    app.mount("/assets", StaticFiles(directory=str(_dist / "assets")), name="assets")
 
-@app.get("/")
-async def root():
-    return {"status": "ok", "message": "Report & Analysis Intelligence Generator API is running"}
+    # Catch-all: serve index.html for any non-API route (React SPA routing)
+    @app.get("/{full_path:path}")
+    async def serve_spa(full_path: str):
+        index = _dist / "index.html"
+        return FileResponse(str(index))
+else:
+    @app.get("/")
+    async def root():
+        return {"status": "ok", "message": "Report & Analysis Intelligence Generator API is running"}

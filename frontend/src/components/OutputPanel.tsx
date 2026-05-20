@@ -1,4 +1,3 @@
-import React from 'react';
 import { Loader2, CheckCircle2, Download, AlertCircle, BookOpen } from 'lucide-react';
 
 interface ProgressStep {
