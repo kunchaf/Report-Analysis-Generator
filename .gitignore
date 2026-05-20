@@ -1,0 +1,27 @@
+# Python
+backend/venv/
+backend/__pycache__/
+backend/app/__pycache__/
+backend/app/api/__pycache__/
+backend/app/services/__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+
+# Secrets — never commit these
+backend/.env
+backend/app/.env
+
+# Node
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+
+# Temp PDF files generated at runtime
+*.pdf
+
+# OS / editor
+.DS_Store
+.vscode/
+*.suo
+*.sw?

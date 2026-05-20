@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Report &amp; Analysis Intelligence Generator – {{ topic }}</title>
+  <style>
+    @page {
+        size: a4 portrait;
+        margin: 2cm;
+    }
+
+    body {
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 11pt;
+      line-height: 1.5;
+      color: #1a1a2e;
+    }
+
+    .cover {
+      padding-top: 150px;
+      text-align: center;
+    }
+
+    .cover-badge {
+      background-color: #f1f5f9;
+      color: #475569;
+      border: 1px solid #cbd5e1;
+      padding: 5px 15px;
+      font-size: 10pt;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .cover-title {
+      font-size: 28pt;
+      font-weight: bold;
+      margin-top: 30px;
+      margin-bottom: 15px;
+      color: #0f172a;
+    }
+
+    .cover-topic {
+      font-size: 16pt;
+      color: #4f46e5;
+      font-style: italic;
+      margin-bottom: 50px;
+    }
+
+    .cover-divider {
+      width: 100px;
+      height: 2px;
+      background-color: #4f46e5;
+      margin: 0 auto 50px auto;
+    }
+
+    .cover-meta {
+      font-size: 10pt;
+      color: #64748b;
+      margin-top: 100px;
+      text-align: center;
+    }
+
+    .toc-title {
+      font-size: 20pt;
+      color: #0f172a;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+
+    .toc-item {
+      font-size: 12pt;
+      margin-bottom: 10px;
+      color: #334155;
+    }
+
+    .perspective-section {
+      padding-top: 20px;
+    }
+
+    .perspective-header {
+      background-color: #1e293b;
+      color: #ffffff;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+
+    .perspective-number {
+      font-size: 9pt;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #94a3b8;
+    }
+
+    .perspective-title {
+      font-size: 16pt;
+      font-weight: bold;
+      margin-top: 5px;
+    }
+
+    .perspective-body {
+      text-align: justify;
+    }
+
+    h3 {
+      color: #4f46e5;
+      font-size: 13pt;
+      margin-top: 15px;
+      margin-bottom: 5px;
+    }
+
+    h4 {
+      color: #6366f1;
+      font-size: 11pt;
+      margin-top: 10px;
+      margin-bottom: 5px;
+    }
+
+    p {
+      margin-bottom: 10px;
+    }
+
+    ul {
+      margin-left: 20px;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- COVER PAGE -->
+  <div class="cover">
+    <div><span class="cover-badge">Report &amp; Analysis Intelligence Generator</span></div>
+    <div class="cover-title">Comprehensive Multi-Perspective<br/>Intelligence Report</div>
+    <div class="cover-topic">{{ topic }}</div>
+    <div class="cover-divider"></div>
+    <div class="cover-meta">
+      <p><strong>Classification:</strong> Confidential</p>
+      <p><strong>Generated:</strong> {{ generated_at[:10] if generated_at else 'N/A' }}</p>
+      <p><strong>Perspectives Analyzed:</strong> {{ perspectives | length }}</p>
+      <p><strong>System:</strong> Report &amp; Analysis Intelligence Generator v1.0</p>
+    </div>
+  </div>
+
+  <pdf:nextpage />
+
+  <!-- TABLE OF CONTENTS -->
+  <div>
+    <div class="toc-title">Table of Contents</div>
+    {% for key, persp in perspectives.items() %}
+    <div class="toc-item">
+      {{ loop.index }}. {{ persp.label }}
+    </div>
+    {% endfor %}
+  </div>
+
+  <pdf:nextpage />
+
+  <!-- PERSPECTIVE SECTIONS -->
+  {% for key, persp in perspectives.items() %}
+  <div class="perspective-section">
+    <div class="perspective-header">
+      <div class="perspective-number">Section {{ loop.index }} of {{ perspectives | length }}</div>
+      <div class="perspective-title">{{ persp.label }}</div>
+    </div>
+
+    <div class="perspective-body">
+      {% set lines = persp.content.split('\n') %}
+      {% for line in lines %}
+        {% if line.strip() %}
+          {% if line.startswith('## ') %}
+            <h3>{{ line[3:] }}</h3>
+          {% elif line.startswith('### ') %}
+            <h4>{{ line[4:] }}</h4>
+          {% elif line.startswith('- ') or line.startswith('* ') %}
+            <ul><li>{{ line[2:] | replace('**', '') }}</li></ul>
+          {% else %}
+            <p>{{ line | replace('**', '') | replace('*', '') }}</p>
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  {% if not loop.last %}
+  <pdf:nextpage />
+  {% endif %}
+  {% endfor %}
+
+</body>
+</html>
